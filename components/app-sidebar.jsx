@@ -13,10 +13,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-
-import { supabase } from '@/lib/supabaseClient'
-import { useUser } from '../context/UserContext'
-import { Button } from "./ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 
 
