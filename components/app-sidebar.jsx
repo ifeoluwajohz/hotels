@@ -1,6 +1,6 @@
 
 'use client' ;
-import { Calendar, ChevronUp, FileQuestion, FolderCode, Home, HouseIcon, Inbox, Settings, User2, UserCircle, Workflow } from "lucide-react"
+import { Cake, Calendar, ChevronUp, DiamondPercent, Facebook, FileQuestion, FlameKindling, FolderCode, Home, HouseIcon, Inbox, LucideCalendarArrowUp, Mail, Settings, Spade, SplitSquareHorizontalIcon, User, User2, UserCircle, Workflow } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -60,17 +60,14 @@ const items = [
 ]
 
 export function AppSidebar() {
-      const { user, loading , logout } = useUser()
 
-      const handleLogout = async () => {
-        await supabase.auth.signOut()
-      }
     
 return (
     <Sidebar collapsible="icon" className="flex flex-col h-full">
       <SidebarContent className="flex-1">
         <SidebarGroup>
-          <p className="text-2xl mt-4 mb-6 mx-2 font-black">SPANISH</p>
+          <p className="text-2xl mb-10 mx-1 font-black items-center"><FlameKindling /></p>
+
           <SidebarGroupLabel className="font-medium">Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -91,9 +88,15 @@ return (
 
       <SidebarFooter className="mt-auto">
         <SidebarMenu>
-          <Button className="w-full hover:bg-yellow-900 transition ease-in-out">BOOK NOW</Button>
+          <SidebarGroupLabel className="flex items-center justify-between px-1 py-2">
+            <Mail className="icon-hover" />
+            <User className="icon-hover" />
+            <FlameKindling className="icon-hover" />
+            <Cake className="icon-hover" />
+          </SidebarGroupLabel>
         </SidebarMenu>
       </SidebarFooter>
+
     </Sidebar>
 )
 }

@@ -5,7 +5,7 @@ import { useUser } from '../../context/UserContext'
 import { supabase } from '@/lib/supabaseClient'
 import { User2, UserCircle2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { toast } from "sonner"
+import { toast, Toaster } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,47 +14,92 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useEffect } from 'react' 
 
 
 
 
 const Profile = () => {
   const { user, loading } = useUser()
-  const router = useRouter()
 
   if (loading) return <div className="flex fixed right-2 p-2">
   <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-gray-900"></div>
 </div>
 
 const SignIn = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: 'http://localhost:3000/',
-    },
-  })
-
-  if (error) {
-    toast("Sign-in failed", {
-      description: error.message,
-      action: {
-        label: "Retry",
-        onClick: () => SignInWithToast(),
+  try{
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/',
       },
     })
-  } else {
-    toast("Sign-in successful", {
-      description: "Welcome back!",
-      action: {
-        label: "Dismiss",
-        onClick: () => console.log("Dismissed"),
-      },
-    })
+  
+    if (error) {
+      toast("Sign-in failed", {
+        description: error.message,
+        action: {
+          label: "Retry",
+          onClick: () => SignInWithToast(),
+        },
+      })
+    } else {
+      toast("Sign-in successful", {
+        description: "Welcome back!",
+        action: {
+          label: "Dismiss",
+          onClick: () => console.log("Dismissed"),
+        },
+      })
+    }
+  }catch(err){
+    toast.error(err.message)
   }
+}
+
+const SignInWithToast = () => {
+  useEffect(async()=> {
+    try{
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: process.env.NODE_ENV === 'production'
+            ? 'https://your-production-url.com/'
+            : 'http://localhost:3000/',
+        },
+      })
+    
+      if (error) {
+        toast("Sign-in failed", {
+          description: error.message,
+          action: {
+            label: "Retry",
+            onClick: () => SignInWithToast(),
+          },
+        })
+      } else {
+        toast.success("Sign-in successful")
+        toast("Sign-in successful", {
+          description: "Welcome back!",
+          action: {
+            label: "Dismiss",
+            onClick: () => console.log("Dismissed"),
+          },
+        })
+      }
+    }catch(err){
+      toast.error(err.message)
+      console.log(err.message)
+    }
+  },[user])
+  
+  
+  
 }
 
   return (
     <DropdownMenu>
+      <Toaster richColors={true} />
       <DropdownMenuTrigger asChild>
       <Button variant="ghost" className="p-2 flex justify-center items-center">
         <User2 className="h-5 w-5" />
@@ -107,7 +152,7 @@ const SignIn = async () => {
         <Button
           variant="default"
           className="w-full mt-2"
-          onClick={SignIn}
+          onClick={SignInWithToast}
         >
           Sign In
         </Button>
@@ -122,49 +167,4 @@ export default Profile
 
 
 
-const SignInWithToast = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: process.env.NODE_ENV === 'production'
-        ? 'https://your-production-url.com/'
-        : 'http://localhost:3000/',
-    },
-  })
 
-  if (error) {
-    toast("Sign-in failed", {
-      description: error.message,
-      action: {
-        label: "Retry",
-        onClick: () => SignInWithToast(),
-      },
-    })
-  } else {
-    toast("Sign-in successful", {
-      description: "Welcome back!",
-      action: {
-        label: "Dismiss",
-        onClick: () => console.log("Dismissed"),
-      },
-    })
-  }
-}
-export function SonnerDemo() {
-  return (
-    <Button
-      variant="outline"
-      onClick={() =>
-        toast("Event has been created", {
-          description: "Sunday, December 03, 2023 at 9:00 AM",
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
-        })
-      }
-    >
-      Show Toast
-    </Button>
-  )
-}
