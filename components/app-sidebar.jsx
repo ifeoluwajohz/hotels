@@ -36,12 +36,12 @@ const items = [
   },
   {
     title: "Bookings",
-    url: "Reserves",
+    url: "/Bookings",
     icon: Calendar,
   },
   {
     title: "Payments",
-    url: "#",
+    url: "/Payments",
     icon: Workflow,
   },
   {
@@ -51,7 +51,7 @@ const items = [
   },
   {
     title: "Faq's",
-    url: "Faq",
+    url: "/Faq",
     icon: FileQuestion,
   },
   {
@@ -74,14 +74,19 @@ return (
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <Tooltip key={item.title}>
+                <TooltipTrigger >
                   <SidebarMenuButton asChild>
                     <a href={item.url} className="flex items-center space-x-2 p-2 my-1 hover:bg-gray-100 rounded-md transition">
                       <item.icon className="w-5 h-5" />
                       <span className="text-sm font-medium ">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
-                </SidebarMenuItem>
+                  <TooltipContent>
+                    <p>{item.title}</p>
+                  </TooltipContent>
+                </TooltipTrigger>
+                </Tooltip>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

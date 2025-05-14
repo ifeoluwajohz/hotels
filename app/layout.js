@@ -27,8 +27,8 @@ export default function RootLayout({ children }) {
         <UserProvider>
           <SidebarProvider >
             <AppSidebar  />
-            <main className="w-full md:px-4 md:p-2 p-2">
-              <div className="flex justify-around mb-5">
+            <main className="w-full md:px-4 md:p-4 p-2">
+              <div className="flex justify-around mb-5 items-center">
                 <SidebarTrigger />
                 <Nav />
               </div>

@@ -4,33 +4,39 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
+// Create a context
 const UserContext = createContext(null)
 
+// Context Provider
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
+    // Get session on initial load
+    const getSession = async () => {
+      const { data, error } = await supabase.auth.getSession()
+      setUser(data?.session?.user ?? null)
       setLoading(false)
     }
 
-    getUser()
+    getSession()
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Listen for changes in auth state (login, logout, refresh)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
 
+    // Cleanup listener
     return () => {
-      authListener.subscription.unsubscribe()
+      subscription.unsubscribe()
     }
   }, [])
 
+  // Logout function
   const logout = async () => {
     await supabase.auth.signOut()
     setUser(null)
@@ -44,6 +50,7 @@ export const UserProvider = ({ children }) => {
   )
 }
 
+// Hook to use user context
 export const useUser = () => {
   const context = useContext(UserContext)
   if (!context) throw new Error('useUser must be used within a UserProvider')

@@ -32,7 +32,7 @@ const Page = () => {
     fetchBranches();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className='items-center justify-center'>Loading...</div>;
 
   return (
     <div className="min-h-screen bg-white py-10 px-4">
