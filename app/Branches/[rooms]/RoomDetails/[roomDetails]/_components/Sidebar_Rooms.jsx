@@ -18,6 +18,8 @@ const Sidebar_Rooms = ({ room }) => {
   const userId = user?.id;
 
   useEffect(() => {
+    if (!room?.id) return;
+
     const fetchBookings = async () => {
       const { data, error } = await supabase
         .from("bookings")
@@ -29,6 +31,7 @@ const Sidebar_Rooms = ({ room }) => {
         return;
       }
 
+      console.log("Fetched bookings for room:", data); // ✅ Log Supabase data
       setBookedRanges(data || []);
     };
 
@@ -60,6 +63,10 @@ const Sidebar_Rooms = ({ room }) => {
   };
 
   const handleBooking = async () => {
+    if (!userId) {
+      return toast.error("You must be logged in to book.");
+    }
+
     if (!range || !guests) {
       return toast.error("Please select check-in, check-out, and number of guests.");
     }
@@ -76,7 +83,7 @@ const Sidebar_Rooms = ({ room }) => {
       .or(`and(check_in.lte.${checkOut},check_out.gte.${checkIn})`);
 
     if (fetchError) {
-      console.error(fetchError);
+      console.error("Availability check failed:", fetchError);
       setLoading(false);
       return toast.error("An error occurred while checking availability.");
     }
@@ -86,7 +93,7 @@ const Sidebar_Rooms = ({ room }) => {
       return toast.error("Room already booked for selected dates.");
     }
 
-    const { error: insertError } = await supabase.from("bookings").insert([
+    const { data: inserted, error: insertError } = await supabase.from("bookings").insert([
       {
         customer_id: userId,
         room_id: room.id,
@@ -100,12 +107,14 @@ const Sidebar_Rooms = ({ room }) => {
     setLoading(false);
 
     if (insertError) {
-      console.log(insertError);
+      console.error("Booking insert error:", insertError);
       return toast.error("Booking failed. Try again.");
     }
 
+    console.log("New booking inserted:", inserted); // ✅ Log newly inserted booking
     toast.success("Booking successful!");
     setRange(null);
+    setGuests(0);
   };
 
   return (

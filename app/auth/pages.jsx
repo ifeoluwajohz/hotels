@@ -25,7 +25,7 @@ const Profile = () => {
       options: {
         redirectTo:
           process.env.NODE_ENV === 'production'
-            ? 'https://your-production-url.com/'
+            ? process.env.NEXT_PUBLIC_ORIGIN_URL + "/"
             : 'http://localhost:3000/',
       },
     })
